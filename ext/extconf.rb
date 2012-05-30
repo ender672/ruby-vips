@@ -1,10 +1,10 @@
-ENV['RC_ARCHS'] = '' if RUBY_PLATFORM =~ /darwin/
+cENV['RC_ARCHS'] = '' if RUBY_PLATFORM =~ /darwin/
 
 require "mkmf"
 
 File::unlink("Makefile") if (File::exist?("Makefile"))
 
-pkg_config("vips-7.23") || pkg_config("vips-7.22") || pkg_config("vips-7.20")
+%w{7.24 7.23 7.22 7.20}.each{|x| break if pkg_config("vips-#{x}")}
 
 have_header('vips/vips.h')
 create_makefile('vips_ext')
