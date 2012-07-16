@@ -4,7 +4,8 @@ require "mkmf"
 
 File::unlink("Makefile") if (File::exist?("Makefile"))
 
-pkg_config("vips-7.23") || pkg_config("vips-7.22") || pkg_config("vips-7.20")
+VIPS_VERSIONS = %w[7.29 7.28 7.27 7.26 7.24 7.23 7.22 7.20]
 
-have_header('vips/vips.h')
+raise("There is no pkg_config for any of following libvips versions: #{VIPS_VERSIONS.join(', ')}") unless VIPS_VERSIONS.detect {|x| pkg_config("vips-#{x}") }
+
 create_makefile('vips_ext')

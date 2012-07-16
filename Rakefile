@@ -1,29 +1,65 @@
-require "rubygems"
+# encoding: utf-8
 
-def gemspec
-  @gemspec ||= begin
-    file = File.expand_path('../ruby-vips.gemspec', __FILE__)
-    eval(File.read(file), binding, file)
-  end
-end
+$:.unshift File.expand_path('lib', File.dirname(__FILE__))
+
+require "rubygems"
+require 'bundler'
+
+require 'vips/version'
 
 begin
-  require "spec"
-  require "spec/rake/spectask"
-rescue LoadError
-  raise 'Run `gem install rspec` to be able to run specs.'
-else
-  task :clear_tmp do
-    FileUtils.rm_rf(File.expand_path("../tmp", __FILE__))
-  end
-
-  Spec::Rake::SpecTask.new
+  Bundler.setup(:default, :development)
+rescue Bundler::BundlerError => e
+  $stderr.puts e.message
+  $stderr.puts "Run `bundle install` to install missing gems"
+  exit e.status_code
 end
 
-desc "Build the gem"
-task :build => "#{gemspec.full_name}.gem"
+require 'rake'
+require 'jeweler'
 
-file "#{gemspec.full_name}.gem" => gemspec.files + ["ruby-vips.gemspec"] do
-  system "gem build ruby-vips.gemspec"
+Jeweler::Tasks.new do |gem|
+  # gem is a Gem::Specification... see http://docs.rubygems.org/read/chapter/20 for more options
+
+  gem.name = "ruby-vips"
+  gem.homepage = "http://github.com/jcupitt/ruby-vips"
+  gem.license = "MIT"
+  
+  gem.summary = %Q{ruby-vips is a ruby extension for vips. It is extremely fast and it can process huge images without requiring the entire image to be loaded into memory.}
+  
+  gem.description = %Q{Ruby extension for the vips image processing library.}
+  
+  gem.email = "jcupitt@gmail.com"
+  gem.authors = ["Timothy Elliott", "John Cupitt"]
+
+  gem.version = VIPS::VERSION
+  
+  gem.files = [
+    "*.*",
+    "*.",
+    "lib/**/*",
+    "ext/**/*"
+  ]
+
+  # dependencies defined in Gemfile
+end
+Jeweler::RubygemsDotOrgTasks.new
+
+require 'rspec/core'
+require 'rspec/core/rake_task'
+RSpec::Core::RakeTask.new(:spec) do |spec|
+  spec.pattern = FileList['spec/**/*_spec.rb']
 end
 
+task :default => :spec
+
+require 'rdoc/task'
+
+Rake::RDocTask.new do |rdoc|
+  version = File.exist?('VERSION') ? File.read('VERSION') : ""
+
+  rdoc.rdoc_dir = 'rdoc'
+  rdoc.title = "ruby-vips #{version}"
+  rdoc.rdoc_files.include('README*')
+  rdoc.rdoc_files.include('lib/**/*.rb')
+end
