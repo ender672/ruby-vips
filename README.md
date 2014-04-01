@@ -1,3 +1,9 @@
+## New Canonical Repository
+
+Check out https://github.com/jcupitt/ruby-vips for **the most recent updates** to ruby-vips.
+
+***
+
 ## ruby-vips : A fast image processing extension for Ruby.
 
 ruby-vips is a ruby extension for [vips](http://www.vips.ecs.soton.ac.uk). It is
